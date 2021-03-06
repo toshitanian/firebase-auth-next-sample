@@ -2,6 +2,16 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { auth, googleProvider } from "../lib/firebase";
+import {
+  Toolbar,
+  Container,
+  Button,
+  AppBar,
+  Typography,
+  IconButton,
+  TextField,
+} from "@material-ui/core";
+import Header from "../components/header";
 
 const Login = () => {
   const router = useRouter();
@@ -13,7 +23,7 @@ const Login = () => {
     });
   }, []);
 
-  const logIn = async (e) => {
+  const clickEmailLogin = async (e) => {
     e.preventDefault();
     try {
       await auth.signInWithEmailAndPassword(email, password);
@@ -25,68 +35,72 @@ const Login = () => {
   const clickGoogleLogin = async (e) => {
     e.preventDefault();
     try {
-    await auth
-    .signInWithPopup(googleProvider)
-    .then((result) => {
-        var credential = result.credential;
+      await auth
+        .signInWithPopup(googleProvider)
+        .then((result) => {
+          var credential = result.credential;
 
-        // This gives you a Google Access Token. You can use it to access the Google API.
-        var token = credential.accessToken;
-        // The signed-in user info.
-        var user = result.user;
-        // ...
-    }).catch((error) => {
-        // Handle Errors here.
-        var errorCode = error.code;
-        var errorMessage = error.message;
-        // The email of the user's account used.
-        var email = error.email;
-        // The firebase.auth.AuthCredential type that was used.
-        var credential = error.credential;
-        // ...
-    });
+          // This gives you a Google Access Token. You can use it to access the Google API.
+          var token = credential.accessToken;
+          // The signed-in user info.
+          var user = result.user;
+          // ...
+        })
+        .catch((error) => {
+          // Handle Errors here.
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          // The email of the user's account used.
+          var email = error.email;
+          // The firebase.auth.AuthCredential type that was used.
+          var credential = error.credential;
+          // ...
+        });
     } catch (err) {
-        console.log(err);
+      console.log(err);
     }
-  }
+  };
 
   return (
     <div className="wrapper">
-      <h2>Email Login</h2>
-      <form className="auth" onSubmit={logIn}>
-        <div>
-          <label htmlFor="email" className="auth-label">
-            Email:{" "}
-          </label>
-          <input
-            id="email"
-            className="auth-input"
+      <Header></Header>
+      <Container maxWidth="lg">
+        <Container className="login-box" maxWidth="md">
+          <Typography variant="h5">Email Login</Typography>
+
+          <TextField
+            id="standard-basic"
+            label="Email"
+            required
+            fullWidth
             type="email"
             onChange={(e) => setEmail(e.target.value)}
           />
-        </div>
-        <div className="mt-2">
-          <label htmlFor="password" className="auth-label">
-            Password:{" "}
-          </label>
-          <input
-            id="password"
-            className="auth-input"
+          <TextField
+            id="standard-basic"
+            label="Password"
+            required
+            fullWidth
             type="password"
             onChange={(e) => setPassword(e.target.value)}
           />
-        </div>
-        <button className="auth-btn" type="submit">
-          Login
-        </button>
-      </form>
-      <h2>Google Login</h2>
-      <div>
-        <button onClick={clickGoogleLogin}></button>
-      </div>
-      <Link href="/signup">
-        <a className="auth-link">signup</a>
-      </Link>
+          <Button variant="contained" color="primary" onClick={clickEmailLogin}>
+            Login
+          </Button>
+        </Container>
+        <Container className="login-box" maxWidth="md">
+          <Typography variant="h5">Google Login</Typography>
+          <div>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={clickGoogleLogin}
+            >
+              Login
+            </Button>
+          </div>
+        </Container>
+      </Container>
     </div>
   );
 };
